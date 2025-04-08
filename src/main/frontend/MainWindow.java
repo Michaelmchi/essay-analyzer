@@ -4,6 +4,7 @@
  */
 package main.frontend;
 
+import javax.swing.table.DefaultTableModel;
 import main.backend.EssayFeedbackAPI;
 import main.backend.JsonParser;
 
@@ -12,7 +13,10 @@ import main.backend.JsonParser;
  * @author chen0
  */
 public class MainWindow extends javax.swing.JFrame {
-
+    
+    String feedback;
+    String essay;
+    HistoryWindow history = new HistoryWindow();
     /**
      * Creates new form MainWindow
      */
@@ -38,6 +42,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -100,6 +105,13 @@ public class MainWindow extends javax.swing.JFrame {
         jTextArea2.setText("No feedback yet");
         jScrollPane2.setViewportView(jTextArea2);
 
+        jButton2.setText("History");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -112,7 +124,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(266, 266, 266)
+                                .addGap(150, 150, 150)
+                                .addComponent(jButton2)
+                                .addGap(41, 41, 41)
                                 .addComponent(jButton1))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(28, 28, 28)
@@ -131,7 +145,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jButton1)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jButton1)
+                                .addComponent(jButton2))))
                     .addComponent(jScrollPane2))
                 .addGap(15, 15, 15))
         );
@@ -140,17 +156,19 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String essay = jTextArea1.getText();
+        essay = jTextArea1.getText();
         EssayFeedbackAPI api = new EssayFeedbackAPI();
 
         try {
             String rawJson = api.getFeedback(essay);
-            String feedback = JsonParser.extractReply(rawJson);
+            feedback = JsonParser.extractReply(rawJson);
             jTextArea2.setText("Feedback:\n" + feedback);
         } catch (Exception e) {
             jTextArea2.setText("Error: " + e.getMessage());
             e.printStackTrace();
         }
+        
+        history.addHistoryEntry(essay, feedback);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jLabel2KeyTyped
@@ -166,7 +184,13 @@ public class MainWindow extends javax.swing.JFrame {
             String [] words = text.split("\\s+");
             jLabel2.setText("Word Count: " + words.length);
         }
+        
     }//GEN-LAST:event_jTextArea1KeyTyped
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        history.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -205,6 +229,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
