@@ -4,6 +4,9 @@
  */
 package main.frontend;
 
+import main.backend.EssayFeedbackAPI;
+import main.backend.JsonParser;
+
 /**
  *
  * @author chen0
@@ -106,7 +109,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(266, 266, 266)
@@ -137,7 +140,17 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        String essay = jTextArea1.getText();
+        EssayFeedbackAPI api = new EssayFeedbackAPI();
+
+        try {
+            String rawJson = api.getFeedback(essay);
+            String feedback = JsonParser.extractReply(rawJson);
+            jTextArea2.setText("Feedback:\n" + feedback);
+        } catch (Exception e) {
+            jTextArea2.setText("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jLabel2KeyTyped
